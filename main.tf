@@ -2,25 +2,25 @@ resource "azuread_group" "groups" {
   for_each = var.groups
 
   display_name               = each.value.display_name
-  types                      = each.value.types
-  theme                      = each.value.theme
-  security_enabled           = each.value.security_enabled
-  provisioning_options       = each.value.provisioning_options
-  prevent_duplicate_names    = each.value.prevent_duplicate_names
-  owners                     = each.value.owners
-  onpremises_group_type      = each.value.onpremises_group_type
-  members                    = each.value.members
-  visibility                 = each.value.visibility
-  mail_nickname              = each.value.mail_nickname
-  hide_from_outlook_clients  = each.value.hide_from_outlook_clients
-  hide_from_address_lists    = each.value.hide_from_address_lists
-  external_senders_allowed   = each.value.external_senders_allowed
-  description                = each.value.description
-  behaviors                  = each.value.behaviors
-  auto_subscribe_new_members = each.value.auto_subscribe_new_members
-  assignable_to_role         = each.value.assignable_to_role
   administrative_unit_ids    = each.value.administrative_unit_ids
+  assignable_to_role         = each.value.assignable_to_role
+  auto_subscribe_new_members = each.value.auto_subscribe_new_members
+  behaviors                  = each.value.behaviors
+  description                = each.value.description
+  external_senders_allowed   = each.value.external_senders_allowed
+  hide_from_address_lists    = each.value.hide_from_address_lists
+  hide_from_outlook_clients  = each.value.hide_from_outlook_clients
   mail_enabled               = each.value.mail_enabled
+  mail_nickname              = each.value.mail_nickname
+  members                    = each.value.members
+  onpremises_group_type      = each.value.onpremises_group_type
+  owners                     = each.value.owners
+  prevent_duplicate_names    = each.value.prevent_duplicate_names
+  provisioning_options       = each.value.provisioning_options
+  security_enabled           = each.value.security_enabled
+  theme                      = each.value.theme
+  types                      = each.value.types
+  visibility                 = each.value.visibility
   writeback_enabled          = each.value.writeback_enabled
 
   dynamic "dynamic_membership" {
@@ -28,6 +28,16 @@ resource "azuread_group" "groups" {
     content {
       enabled = dynamic_membership.value.enabled
       rule    = dynamic_membership.value.rule
+    }
+  }
+
+  dynamic "timeouts" {
+    for_each = each.value.timeouts != null ? [each.value.timeouts] : []
+    content {
+      create = timeouts.value.create
+      delete = timeouts.value.delete
+      read   = timeouts.value.read
+      update = timeouts.value.update
     }
   }
 }

@@ -27,33 +27,44 @@ Optional:
     - dynamic_membership (block):
         - enabled (required)
         - rule (required)
+    - timeouts (block):
+        - create (optional)
+        - delete (optional)
+        - read (optional)
+        - update (optional)
 EOT
 
   type = map(object({
     display_name               = string
-    types                      = optional(set(string))
-    theme                      = optional(string)
-    security_enabled           = optional(bool)
-    provisioning_options       = optional(set(string))
-    prevent_duplicate_names    = optional(bool)
-    owners                     = optional(set(string))
-    onpremises_group_type      = optional(string)
-    members                    = optional(set(string))
-    visibility                 = optional(string)
-    mail_nickname              = optional(string)
-    hide_from_outlook_clients  = optional(bool)
-    hide_from_address_lists    = optional(bool)
-    external_senders_allowed   = optional(bool)
-    description                = optional(string)
-    behaviors                  = optional(set(string))
-    auto_subscribe_new_members = optional(bool)
-    assignable_to_role         = optional(bool)
     administrative_unit_ids    = optional(set(string))
+    assignable_to_role         = optional(bool)
+    auto_subscribe_new_members = optional(bool)
+    behaviors                  = optional(set(string))
+    description                = optional(string)
+    external_senders_allowed   = optional(bool)
+    hide_from_address_lists    = optional(bool)
+    hide_from_outlook_clients  = optional(bool)
     mail_enabled               = optional(bool)
+    mail_nickname              = optional(string)
+    members                    = optional(set(string))
+    onpremises_group_type      = optional(string)
+    owners                     = optional(set(string))
+    prevent_duplicate_names    = optional(bool)
+    provisioning_options       = optional(set(string))
+    security_enabled           = optional(bool)
+    theme                      = optional(string)
+    types                      = optional(set(string))
+    visibility                 = optional(string)
     writeback_enabled          = optional(bool)
     dynamic_membership = optional(object({
       enabled = bool
       rule    = string
+    }))
+    timeouts = optional(object({
+      create = optional(string)
+      delete = optional(string)
+      read   = optional(string)
+      update = optional(string)
     }))
   }))
   validation {
@@ -75,10 +86,10 @@ EOT
   validation {
     condition = alltrue([
       for k, v in var.groups : (
-        v.dynamic_membership == null || (length(v.dynamic_membership.rule) >= 0 && length(v.dynamic_membership.rule) <= 3072)
+        v.dynamic_membership == null || (length(v.dynamic_membership.rule) <= 3072)
       )
     ])
-    error_message = "must be between 0 and 3072 characters"
+    error_message = "must be at most 3072 characters"
   }
   validation {
     condition = alltrue([
